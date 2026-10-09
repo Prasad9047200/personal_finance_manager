@@ -5,8 +5,12 @@ Run with:  python main.py
 
 import sys
 
-from src.file_manager import ensure_dirs
-from src.menu import FinanceApp
+try:
+    from src.file_manager import ensure_dirs
+    from src.menu import FinanceApp
+except ImportError:  # pragma: no cover
+    from file_manager import ensure_dirs
+    from menu import FinanceApp
 
 
 def main():
