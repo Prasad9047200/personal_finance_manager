@@ -18,13 +18,19 @@ DATA_FILE = os.path.join(DATA_DIR, "expenses.csv")
 
 
 def ensure_dirs():
+    """Create the default project directories used by the app."""
     for folder in (DATA_DIR, BACKUP_DIR, REPORT_DIR):
+        if os.path.exists(folder):
+            if os.path.isdir(folder):
+                continue
+            raise FileExistsError(f"{folder} exists and is not a directory")
         os.makedirs(folder, exist_ok=True)
 
 
 def load_expenses(filename=DATA_FILE):
     """Read expenses from CSV. Bad rows are skipped and reported, never fatal."""
-    ensure_dirs()
+    if filename == DATA_FILE:
+        ensure_dirs()
     expenses, skipped = [], 0
     if not os.path.exists(filename):
         return expenses
@@ -45,7 +51,8 @@ def load_expenses(filename=DATA_FILE):
 
 def save_expenses(expenses, filename=DATA_FILE):
     """Write all expenses to CSV. Returns True on success."""
-    ensure_dirs()
+    if filename == DATA_FILE:
+        ensure_dirs()
     try:
         with open(filename, "w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=FIELDNAMES)
